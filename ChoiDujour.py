@@ -17,7 +17,7 @@ if platform.system() == 'Windows':
     import win32api
 
 programName = 'ChoiDujour'
-programVersion = '1.1.0'
+programVersion = '1.2.0'
 
 extension = '.exe' if platform.system() == 'Windows' else ''
 
@@ -43,9 +43,10 @@ for toolPath in [hactool,kip1decomp,seven7a]:
 
 def print_welcome():
     print('')
-    print(programName + ' ' + programVersion + ' by rajkosto')
+    print(programName + ' ' + programVersion + ' by rajkosto and modified by D3fau4 and Kronos2308')
     print('uses hactool by SciresM (https://github.com/SciresM/hactool)')
     print('visit https://switchtools.sshnuke.net for updates and more Switch stuff!')
+    print('visit https://github.com/StarDustCFW/ChoiDujour for more updates')
     print('')
 
 def print_usage():

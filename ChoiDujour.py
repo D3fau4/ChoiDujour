@@ -643,7 +643,7 @@ try:
     kipdata = kipdata.getContents()
     
     fsPatches = {}
-    fsPatchesJsonBytes = fetch_url_bytes('https://switchtools.sshnuke.net/firmware/fs_patches.json')
+    fsPatchesJsonBytes = fetch_url_bytes('https://choidujour-reloaded.tk/firmware/fs_patches.json')
     fsPatches = json.loads(fsPatchesJsonBytes, object_hook=deunicodify_hook)
 
     fsVersions = fsPatches['versions']
@@ -724,7 +724,7 @@ try:
 
     jayson = {}
     try:
-        patchesJsonUrl = 'https://switchtools.sshnuke.net/firmware/'+versionHash
+        patchesJsonUrl = 'https://choidujour-reloaded.tk/firmware/'+versionHash
         if firmwareIsExFAT:
             patchesJsonUrl += '_exfat'
         patchesJsonUrl += '.json'

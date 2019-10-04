@@ -272,6 +272,22 @@
 		"330553f6b5fb55c4c2d7b736240276b3": {
 			"name": "FS600-exfat.kip1",
 			"patches": { "nocmac": "600_exfat_nocmac", "nogc" : "600_exfat_nogc", "nosigchk" : "600_exfat_nosigchk" }
+		},
+		"2cce659cec536a8e4d91f3be4b74bed3": {
+			"name": "FS700-exfat.kip1",
+			"patches": { "nocmac": "", "nogc" : "", "nosigchk" : "700_exfat_nosigchk" }
+		},
+		"dbd941c0c53c52ccf7202c84d8e0f780": {
+			"name": "FS800-exfat.kip1",
+			"patches": { "nocmac": "", "nogc" : "", "nosigchk" : "800_exfat_nosigchk" }
+		},
+		"b4cae1f24965d92ed24ebe9e97f609c3": {
+			"name": "FS810-exfat.kip1",
+			"patches": { "nocmac": "", "nogc" : "", "nosigchk" : "810_exfat_nosigchk" }
+		},
+		"7c951376e5c12df85fa6a9f46f6957a4": {
+			"name": "FS900-exfat.kip1",
+			"patches": { "nocmac": "", "nogc" : "", "nosigchk" : "900_exfat_nosigchk" }
 		}
 	}
 }

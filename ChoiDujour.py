@@ -5,6 +5,7 @@ import json
 import binascii
 import gzip
 import urllib2
+import time
 from StringIO import StringIO
 import subprocess
 import hashlib
@@ -34,10 +35,11 @@ def find_tool(name):
     sys.exit('Required tool ' + name + ' is missing!')
 
 hactool = find_tool('hactool')
+hactoolnet = find_tool('hactoolnet')
 kip1decomp = find_tool('kip1decomp')
 seven7a = find_tool('7za')
 
-for toolPath in [hactool,kip1decomp,seven7a]:
+for toolPath in [hactool,kip1decomp,seven7a,hactoolnet]:
     if not os.path.exists(toolPath):
         sys.exit('Required tool ' + os.path.basename(toolPath) + ' is missing!')
 
@@ -74,6 +76,13 @@ wanted_patches = ['nocmac', 'nogc']
 myParams = []
 inputFiles = []
 inFileType = ''
+
+currentFile = '__main__'
+realPath = os.path.realpath(currentFile)
+dirPath = os.path.dirname(realPath)
+dirName = os.path.basename(dirPath)
+
+hactoolnet_exe = dirPath + '/hactoolnet.exe'
 
 for i in xrange(1,len(sys.argv)):
     currArg = sys.argv[i]
@@ -829,7 +838,18 @@ try:
         if fileNewHash.lower() != fileHash.lower():
             print('Invalid hash, cannot continue!')
             sys.exit('Extracted file ' + filePath + ' has hash ' + fileNewHash + ' , expected ' + fileHash)
-            
+        
+        print("signing save" + filePath)
+        time.sleep(3)
+        hactoolnet_process = subprocess.call([
+                                        hactoolnet_exe,
+                                        '-t',
+                                        'save',
+                                        '-k',
+                                        "../"+hackeyspath,
+                                        '--sign',
+                                        filePath
+                                    ])
         set_file_attributes(filePath, fileInfo.attrs)
 
     print('All files verified! Prepared firmware update is in folder ' + os.getcwd())

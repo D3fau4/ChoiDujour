@@ -223,7 +223,10 @@ def call_hactool(moreArgs):
         raise Exception(err_msg)
 
     elif len(std_err):
-        raise Exception(std_err)
+        std_err_lines = std_err.splitlines()
+    	for line in std_err_lines:
+    		if "[WARN]:" not in line:
+    			raise Exception(std_err)
 
     return std_out
 
@@ -826,6 +829,7 @@ try:
         if fileNewHash.lower() != fileHash.lower():
             print('Invalid hash, cannot continue!')
             sys.exit('Extracted file ' + filePath + ' has hash ' + fileNewHash + ' , expected ' + fileHash)
+            
         set_file_attributes(filePath, fileInfo.attrs)
 
     print('All files verified! Prepared firmware update is in folder ' + os.getcwd())

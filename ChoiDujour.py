@@ -18,7 +18,7 @@ if platform.system() == 'Windows':
     import win32api
 
 programName = 'ChoiDujour'
-programVersion = '1.2.0'
+programVersion = '1.2.1'
 
 extension = '.exe' if platform.system() == 'Windows' else ''
 
@@ -35,11 +35,10 @@ def find_tool(name):
     sys.exit('Required tool ' + name + ' is missing!')
 
 hactool = find_tool('hactool')
-hactoolnet = find_tool('hactoolnet')
 kip1decomp = find_tool('kip1decomp')
 seven7a = find_tool('7za')
 
-for toolPath in [hactool,kip1decomp,seven7a,hactoolnet]:
+for toolPath in [hactool,kip1decomp,seven7a]:
     if not os.path.exists(toolPath):
         sys.exit('Required tool ' + os.path.basename(toolPath) + ' is missing!')
 
@@ -82,7 +81,7 @@ realPath = os.path.realpath(currentFile)
 dirPath = os.path.dirname(realPath)
 dirName = os.path.basename(dirPath)
 
-hactoolnet_exe = dirPath + '/hactoolnet.exe'
+hactoolnet_exe = dirPath + '/bin/hactoolnet.exe'
 
 for i in xrange(1,len(sys.argv)):
     currArg = sys.argv[i]

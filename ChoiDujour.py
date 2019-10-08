@@ -18,7 +18,7 @@ if platform.system() == 'Windows':
 	import win32api
 
 programName = 'ChoiDujour'
-programVersion = '1.2.2'
+programVersion = '1.2.2b'
 
 extension = '.exe' if platform.system() == 'Windows' else ''
 
@@ -862,6 +862,8 @@ try:
 				raise Exception(err_msg)
 			else:
 				if "CMAC Signature (GOOD):" in str(std_out):
+					print("")
+					print std_out
 					print("")
 					print("Signed")
 					print("")

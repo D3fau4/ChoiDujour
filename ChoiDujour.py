@@ -18,7 +18,7 @@ if platform.system() == 'Windows':
 	import win32api
 
 programName = 'ChoiDujour'
-programVersion = '1.2.2b'
+programVersion = '1.3.0'
 
 extension = '.exe' if platform.system() == 'Windows' else ''
 
@@ -35,6 +35,7 @@ def find_tool(name):
 	sys.exit('Required tool ' + name + ' is missing!')
 
 hactool = find_tool('hactool')
+linkle = find_tool('linkle')
 kip1decomp = find_tool('kip1decomp')
 seven7a = find_tool('7za')
 
@@ -46,8 +47,10 @@ def print_welcome():
 	print('')
 	print(programName + ' ' + programVersion + ' by rajkosto and modified by D3fau4 and Kronos2308')
 	print('uses hactool by SciresM (https://github.com/SciresM/hactool)')
-	print('visit https://switchtools.sshnuke.net for updates and more Switch stuff!')
-	print('visit https://github.com/StarDustCFW/ChoiDujour for more updates')
+	print('uses hactool by MegatonHammer (https://github.com/MegatonHammer/linkle)')
+	print('uses hactool by Thealexbarney (https://github.com/Thealexbarney/LibHac)')
+	print('visit https://switchtools.sshnuke.net for more Switch stuff!')
+	print('visit https://github.com/D3fau4/ChoiDujour for more updates')
 	print('')
 
 def print_usage():
@@ -61,12 +64,14 @@ def print_usage():
 	print('--keyset=path\toverride default hactool keys txt file path')
 	print('--noexfat\talways generate normal BCPKG2/FS.kip1 (no exfat support)')
 	print('--nossl\t\tuse http instead of https protocol for web requests')
+	print('--genkeyblob\tgenerate the keyblobs in boot0 (required keys in keyfile: keyblob_0X, keyblob_key_0X, keyblob_key_source_0X, keyblob_mac_key_0X)')
 	print('--fspatches\tcomma separated list of patches to apply to generated FS.kip1')
 	print('--intype=type\tfirmware package file type (Ignored if firmwareSrc is a folder)')
 	print('firmwareSrc\tpath to source firmware package file or folder')
 	print('')
 
 hackeyspath = ''
+genkeyblob = False
 hacisDev = False
 try_exfat = True
 http_only = False
@@ -101,6 +106,8 @@ try:
 			try_exfat = False
 		elif currParam == '--nossl':
 			http_only = True
+		elif currParam == '--genkeyblob':
+			genkeyblob = True
 		elif currParam.startswith('--keyset='):
 			hackeyspath = currParam[9:]
 		elif currParam.startswith('--intype='):
@@ -237,6 +244,20 @@ def call_hactool(moreArgs):
 				raise Exception(std_err)
 
 	return std_out
+
+def call_linkle(ty, moreArgs):
+    totalArgs = [linkle, ty] + hacargs + moreArgs
+    pipes = subprocess.Popen(totalArgs, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    std_out, std_err = pipes.communicate()
+
+    if pipes.returncode != 0:
+        err_msg = "%s. Code: %s" % (std_err.strip(), pipes.returncode)
+        raise Exception(err_msg)
+
+    elif len(std_err):
+        raise Exception(std_err)
+
+    return std_out
 
 def realtime_run(totalArgs):
 	process = subprocess.Popen(totalArgs, bufsize=0, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
@@ -608,6 +629,21 @@ try:
 	print('Using TitleID ' + safePkg.titleId + ' for SAFE firmware package')
 	safePkg.load(tempDirName, versionPlatform.lower())
 
+	if genkeyblob is True:
+		keys = call_linkle("keygen", [])
+		keyblobs = []
+		for key in keys.split("\n"):
+			if key.startswith("encrypted_keyblob_"):
+				keyblobs.append(key.split(" = ")[1])
+
+		for i in range(len(keyblobs), 32):
+			keyblobs.append("00" * 0xB0)
+
+		keyblobs_arr = bytearray()
+		for keyblob in keyblobs:
+			keyblobs_arr += bytearray.fromhex(keyblob)
+			keyblobs_arr += "\0" * 0x150
+
 	boot0 = bytearray()
 	boot0 += normalPkg.bctBytes
 	boot0 += safePkg.bctBytes
@@ -616,7 +652,12 @@ try:
 	boot0 += "\0" * 0xF0000
 	boot0 += normalPkg.pkg1Bytes
 	boot0 += normalPkg.pkg1Bytes
-	assert len(boot0) == 0x180000
+	if genkeyblob is True:
+		boot0 += keyblobs_arr
+		boot0 += "\0" * 0x200
+		assert len(boot0) == 0x184200
+	else:
+		assert len(boot0) == 0x180000
 
 	boot1 = bytearray()
 	boot1 += safePkg.pkg1Bytes
